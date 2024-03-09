@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+  mariadb:
+    build: 
+      context: ./requirements/mariadb
+    container_name: mariadb
+    image: mariadb:inception
+    env_file:
+      - .env
+    restart: always
+    # ports:
+    #   - "3306:3306"
+    volumes:
+      - vol-db:/var/lib/mysql/
+    networks:
+      - mybridge
+  wordpress:
+    build: 
+      context: ./requirements/wordpress
+    container_name: wordpress
+    image: wordpress:inception
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      - mariadb
+      - nginx
+    volumes:
+      - vol-wp:/var/www/html/wordpress/
+    networks:
+      - mybridge
+  nginx:
+    build: 
+      context: ./requirements/nginx
+    container_name: nginx
+    image: nginx:inception
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - vol-wp:/var/www/html/
+    ports:
+      - '443:443'
+    networks:
+      - mybridge
+volumes:
+  vol-wp:
+    driver: local
+    driver_opts: 
+      type: none
+      device: /home/abelfany/Desktop/vol-wp
+      o: bind
+  vol-db:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/abelfany/Desktop/vol-db
+      o: bind
+
+networks:
+  mybridge:
+    driver: bridge
+
+# version: '3'
+
+# services:
+#   my_ubuntu:
+#     image: celtak/ubuntu-ping-ip
+#     container_name: celtak_ubuntu
+#     stdin_open: true
+#     tty: true

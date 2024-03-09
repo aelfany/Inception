@@ -1,6 +1,9 @@
-FROM debian:stable
-RUN apt update && apt install -y nginx 
-RUN  apt install -y openssl && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt -subj="/CN=abelfany/O=abelfany.1337.ma/C=MA/L=KHOURIBGA"
-COPY ./conf/wordpress /etc/nginx/sites-available
-RUN chmod 777 /etc/nginx/sites-available/wordpress
+FROM debian:bullseye
+RUN apt-get update
+RUN apt-get install -y nginx
+RUN apt-get install -y openssl
+RUN mkdir -p /etc/nginx/ssl/
+RUN openssl req -x509 -nodes -out /etc/nginx/ssl/inception.crt -keyout /etc/nginx/ssl/inception.key -subj "/C=MA/ST=BMF/L=Khouribga/O=42/OU=42/CN=hsaktiwy.42.fr/UID=hsaktiwy"
+RUN mkdir -p /var/run/nginx
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 CMD ["nginx", "-g", "daemon off;"]
