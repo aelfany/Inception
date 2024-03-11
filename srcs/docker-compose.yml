@@ -9,10 +9,8 @@ services:
     env_file:
       - .env
     restart: always
-    # ports:
-    #   - "3306:3306"
     volumes:
-      - vol-db:/var/lib/mysql/
+      - database:/var/lib/mysql/
     networks:
       - mybridge
   wordpress:
@@ -27,7 +25,7 @@ services:
       - mariadb
       - nginx
     volumes:
-      - vol-wp:/var/www/html/wordpress/
+      - wordpress:/var/www/html/
     networks:
       - mybridge
   nginx:
@@ -39,34 +37,26 @@ services:
       - .env
     restart: always
     volumes:
-      - vol-wp:/var/www/html/
+      - wordpress:/var/www/html/
     ports:
       - '443:443'
     networks:
       - mybridge
 volumes:
-  vol-wp:
+  wordpress:
     driver: local
     driver_opts: 
       type: none
-      device: /home/abelfany/Desktop/vol-wp
+      device: /home/abelfany/data/wordpress
       o: bind
-  vol-db:
+  database:
     driver: local
     driver_opts:
       type: none
-      device: /home/abelfany/Desktop/vol-db
+      device: /home/abelfany/data/database
       o: bind
 
 networks:
   mybridge:
     driver: bridge
 
-# version: '3'
-
-# services:
-#   my_ubuntu:
-#     image: celtak/ubuntu-ping-ip
-#     container_name: celtak_ubuntu
-#     stdin_open: true
-#     tty: true
